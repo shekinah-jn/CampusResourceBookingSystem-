@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Create Resource - Concordia Resource Manager</title>
+  <link rel="stylesheet" href="dashboard.css" />
+  <style>
+    .form { display: grid; gap: 1rem; max-width: 700px; }
+    .row { display: grid; grid-template-columns: 1fr !important; gap: .5rem; }
+    .row.two { grid-template-columns: 1fr 1fr !important; gap: 1rem; }
+    label { font-weight: 600; }
+    label span { font-weight: normal; color: #444; }
+    input[type="text"], input[type="number"], select {
+      padding: .55rem .7rem; border: 1px solid #bbb; border-radius: 6px; width: 100%; box-sizing: border-box;
+    }
+    .actions { display: flex; gap: 1rem; margin-top: .5rem; flex-wrap: wrap; }
+    .btn { padding: .6rem 1rem; border: none; border-radius: 6px; cursor: pointer; }
+    .btn-primary { background: var(--main-color); color: #fff; }
+    .btn-ghost { background: #eee; color: #333; }
+  </style>
+</head>
+<body>
+<form class="manage-profile" id="manageProfile" role="dialog" aria-modal="true" aria-labelledby="manageProfileTitle" hidden>
+  <div class="mp-card" role="document">
+    <div class="mp-header">
+      <h2 id="manageProfileTitle">Manage Profile</h2>
+      <button type="button" class="mp-close" id="mpClose" aria-label="Close">&times;</button>
+    </div>
+    <div class="mp-body">
+      <div class="mp-row mp-avatar">
+        <img id="mpAvatarPreview" src="../resources/avatar.jpg" alt="Avatar preview">
+      </div>
+      <div class="mp-field">
+        <label for="mpDisplayName">Display Name</label>
+        <input id="mpDisplayName" name="displayname" type="text" maxlength="80" />
+      </div>
+      <div class="mp-field">
+        <label for="mpEmail">Email</label>
+        <input id="mpEmail" name="email" type="email" />
+      </div>
+    </div>
+    <div class="mp-footer">
+      <button type="button" id="mpCancel">Cancel</button>
+      <button type="submit" id="mpSave">Save</button>
+    </div>
+  </div>
+</form>
+
+<div class="center">
+  <div id="banner"><img src="../resources/concordia.png" alt="Concordia"></div>
+  <h2 id="title">Create Resource</h2>
+
+  <aside class="sidebar">
+    <form class="sidebar-buttons" action="dashboard.html" method="get">
+      <button id="dashboard" type="submit">Dashboard</button>
+      <button id="manage" class="sidebar-buttons-current-page" type="submit" formaction="modify.html">Modify Resources</button>
+      <button id="view" type="submit" formaction="requests.html">Active Requests</button>
+      <!-- Data Analysis removed - embedded in dashboard -->
+    </form>
+    <div class="sidebar-deadspace"></div>
+    <button class="profile-button">
+      <div id="avatar"><img id="avatar-img" src="../resources/avatar.jpg" alt=""></div>
+      <div id="profile-name"><p id="displayname">[Display Name]</p><p id="email">[email@domain.gg]</p></div>
+    </button>
+  </aside>
+
+  <main class="portal">
+    <h3 id="portal-title"></h3>
+
+    <div style="padding: 1rem;">
+      <form id="createForm" class="form" novalidate>
+        <div class="row">
+          <label for="name">Name *</label>
+          <input id="name" name="name" type="text" required />
+        </div>
+
+        <div class="row two">
+          <div class="row">
+            <label for="location">Location * <span>(e.g., EV-5.123)</span></label>
+            <input id="location" name="location" type="text" required />
+          </div>
+
+          <div id="capacityWrap" class="row" style="display:none;">
+            <label for="capacity">Capacity * <span>(e.g., 12)</span></label>
+            <input id="capacity" name="capacity" type="number" min="1" />
+          </div>
+        </div>
+
+        <div class="row">
+          <label for="availability">Availability *</label>
+          <select id="availability" name="availability" required>
+            <option value="">Select…</option>
+            <option value="available">Available</option>
+            <option value="unavailable">Unavailable</option>
+          </select>
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn btn-primary" id="saveBtn">Create & Exit</button>
+          <button type="button" class="btn btn-ghost" id="cancelBtn">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+
+<footer class="footer"><h3>footer</h3></footer>
+
+<script>
+  const API_BASE = 'http://localhost:8000';
+
+  const params = new URLSearchParams(location.search);
+  const type = params.get('type') || 'resource';
+
+  const humanTypeMap = {
+    study: 'Study Room',
+    lab: 'Lab Room',
+    equipment: 'Equipment'
+  };
+  const humanType = humanTypeMap[type] || 'Resource';
+
+  // Update headings
+  document.getElementById('portal-title').textContent = `Create ${humanType}`;
+  document.getElementById('title').textContent = `Create ${humanType}`;
+
+  // Show capacity only for study rooms and labs
+  const capacityWrap = document.getElementById('capacityWrap');
+  if (type === 'study' || type === 'lab') {
+    capacityWrap.style.display = '';
+  }
+
+  function resourcePathFromType(t) {
+    if (t === 'study') return 'rooms';      // study rooms live in "rooms" category
+    if (t === 'lab') return 'labs';
+    if (t === 'equipment') return 'equipment';
+    return 'rooms';
+  }
+
+  async function handleCreate() {
+    const nameEl = document.getElementById('name');
+    const locationEl = document.getElementById('location');
+    const availabilityEl = document.getElementById('availability');
+
+    const name = nameEl.value.trim();
+    const location = locationEl.value.trim();
+    const availability = availabilityEl.value;
+
+    if (!name || !location || !availability) {
+      alert('Please fill in all required fields.');
+      return;
+    }
+
+    const availableBool = availability === 'available';
+
+    const payload = {
+      name,
+      location,
+      available: String(availableBool)
+    };
+
+    const path = resourcePathFromType(type);
+
+    try {
+      const res = await fetch(`${API_BASE}/admin/${path}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) {
+        console.error('Create failed', await res.text());
+        alert('Error creating resource. Please check the backend.');
+        return;
+      }
+
+      alert('Resource created successfully.');
+      location.href = 'modify.html';
+    } catch (err) {
+      console.error(err);
+      alert('Network error creating resource.');
+    }
+  }
+
+  document.getElementById('saveBtn').addEventListener('click', handleCreate);
+  document.getElementById('cancelBtn').addEventListener('click', () => {
+    location.href = 'modify.html';
+  });
+</script>
+<script src="manage-profile.js"></script>
+</body>
+</html>

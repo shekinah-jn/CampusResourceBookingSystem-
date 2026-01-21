@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Edit Resource - Concordia Resource Manager</title>
+  <link rel="stylesheet" href="dashboard.css" />
+  <style>
+    .form { display: grid; gap: 1rem; max-width: 700px; }
+    .row { display: grid; grid-template-columns: 1fr !important; gap: .5rem; }
+    .row.two { grid-template-columns: 1fr 1fr !important; gap: 1rem; }
+    label { font-weight: 600; }
+    label span { font-weight: normal; color: #444; }
+    input[type="text"], input[type="number"], select {
+      padding: .55rem .7rem; border: 1px solid #bbb; border-radius: 6px; width: 100%; box-sizing: border-box;
+    }
+    .preview { display: flex; align-items: center; gap: .5rem; }
+    .preview img { width: 40px; height: 40px; object-fit: cover; border-radius: 6px; border: 1px solid #ddd; }
+
+    .actions { display: flex; gap: 1rem; margin-top: .5rem; flex-wrap: wrap; }
+    .btn { padding: .6rem 1rem; border: none; border-radius: 6px; cursor: pointer; }
+    .btn-primary { background: var(--main-color); color: #fff; }
+    .btn-ghost { background: #eee; color: #333; }
+    .btn-danger { background: #c82333; color: #fff; }
+
+    #portal-title { display: flex; align-items: center; min-height: 46px; padding-left: .5rem; }
+
+    /* Manage Profile Modal */
+    .manage-profile { /* existing styles */ }
+    .mp-card { /* existing styles */ }
+    .mp-header { /* existing styles */ }
+    .mp-close { /* existing styles */ }
+    .mp-body { /* existing styles */ }
+    .mp-row { /* existing styles */ }
+    .mp-avatar { /* existing styles */ }
+    .mp-field { /* existing styles */ }
+    .mp-footer { /* existing styles */ }
+  </style>
+</head>
+<body>
+<form class="manage-profile" id="manageProfile" role="dialog" aria-modal="true" aria-labelledby="manageProfileTitle" hidden>
+  <div class="mp-card" role="document">
+    <div class="mp-header">
+      <h2 id="manageProfileTitle">Manage Profile</h2>
+      <button type="button" class="mp-close" id="mpClose" aria-label="Close">&times;</button>
+    </div>
+    <div class="mp-body">
+      <div class="mp-row mp-avatar">
+        <img id="mpAvatarPreview" src="../resources/avatar.jpg" alt="Avatar preview">
+      </div>
+      <div class="mp-field">
+        <label for="mpDisplayName">Display Name</label>
+        <input id="mpDisplayName" name="displayname" type="text" maxlength="80" />
+      </div>
+      <div class="mp-field">
+        <label for="mpEmail">Email</label>
+        <input id="mpEmail" name="email" type="email" />
+      </div>
+    </div>
+    <div class="mp-footer">
+      <button type="button" id="mpCancel">Cancel</button>
+      <button type="submit" id="mpSave">Save</button>
+    </div>
+  </div>
+</form>
+
+<div class="center">
+  <div id="banner"><img src="../resources/concordia.png" alt="Concordia"></div>
+  <h2 id="title">Modifying</h2>
+
+  <aside class="sidebar">
+    <form class="sidebar-buttons" action="modify.html" method="get">
+      <button id="dashboard" type="submit" formaction="dashboard.html">Dashboard</button>
+      <button id="manage" class="sidebar-buttons-current-page" type="submit">Modify Resources</button>
+      <button id="view" type="submit" formaction="requests.html" formmethod="get">Active Requests</button>
+      <!-- Data Analysis removed - embedded in dashboard -->
+    </form>
+    <div class="sidebar-deadspace"></div>
+    <button class="profile-button">
+      <div id="avatar"><img id="avatar-img" src="../resources/avatar.jpg"></div>
+      <div id="profile-name"><p id="displayname">[Display Name]</p><p id="email">[email@domain.gg]</p></div>
+    </button>
+  </aside>
+
+  <main class="portal">
+    <h3 id="portal-title"></h3>
+
+    <div style="padding: 1rem;">
+      <form id="editForm" class="form" novalidate>
+        <div class="row">
+          <label for="name" id="labelName">Name *</label>
+          <input id="name" name="name" type="text" />
+        </div>
+
+        <div class="row two">
+          <div class="row">
+            <label for="location">Location * <span>(e.g., EV-5.123)</span></label>
+            <input id="location" name="location" type="text" />
+          </div>
+
+          <div id="capacityWrap" class="row" style="display:none;">
+            <label for="capacity">Capacity * <span>(e.g., 12)</span></label>
+            <input id="capacity" name="capacity" type="number" min="1" />
+          </div>
+        </div>
+
+        <div class="row">
+          <label for="availability">Availability *</label>
+          <select id="availability" name="availability">
+            <option value="">Select…</option>
+            <option value="available">Available</option>
+            <option value="unavailable">Unavailable</option>
+          </select>
+        </div>
+
+        <div id="imageWrap" class="row" style="display:none;">
+          <label>Image <span>(static preview)</span></label>
+          <div class="preview" id="imgPreview"></div>
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn btn-primary" id="saveBtn">Save & Exit</button>
+          <button type="button" class="btn btn-ghost" id="discardBtn">Discard Changes & Exit</button>
+          <button type="button" class="btn btn-danger" id="deleteBtn">Delete Resource</button>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+
+<footer class="footer"><h3>footer</h3></footer>
+
+<script>
+  const API_BASE = 'http://localhost:8000';
+
+  function getQueryParams() {
+    const params = new URLSearchParams(location.search);
+    return {
+      type: params.get('type') || 'resource',  // 'study' | 'lab' | 'equipment'
+      id: params.get('id')
+    };
+  }
+
+  function resourcePathFromType(type) {
+    if (type === 'study') return 'rooms';
+    if (type === 'lab') return 'labs';
+    if (type === 'equipment') return 'equipment';
+    return 'rooms';
+  }
+
+  async function loadResource() {
+    const { type, id } = getQueryParams();
+    if (!id) {
+      alert('Missing id in URL.');
+      return;
+    }
+
+    const path = resourcePathFromType(type);
+
+    try {
+      const res = await fetch(`${API_BASE}/admin/${path}?id=${encodeURIComponent(id)}`);
+      if (!res.ok) {
+        console.error('Failed to fetch resource', await res.text());
+        alert('Error loading resource.');
+        return;
+      }
+
+      const data = await res.json();
+      const resource = Array.isArray(data) ? data[0] : data;
+
+      if (!resource) {
+        alert('Resource not found.');
+        return;
+      }
+
+      document.getElementById('name').value = resource.name || '';
+      document.getElementById('location').value = resource.location || '';
+      document.getElementById('availability').value =
+        resource.available ? 'available' : 'unavailable';
+
+      // capacity is not stored in DB; we keep that field hidden / unused
+    } catch (err) {
+      console.error(err);
+      alert('Network error loading resource.');
+    }
+  }
+
+  async function saveResource() {
+    const { type, id } = getQueryParams();
+    const path = resourcePathFromType(type);
+
+    const name = document.getElementById('name').value.trim();
+    const location = document.getElementById('location').value.trim();
+    const availability = document.getElementById('availability').value;
+
+    if (!name || !location || !availability) {
+      alert('Please fill in all required fields.');
+      return;
+    }
+
+    const availableBool = availability === 'available';
+
+    try {
+      const res = await fetch(`${API_BASE}/admin/${path}?id=${encodeURIComponent(id)}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          location,
+          available: String(availableBool)
+        })
+      });
+
+      if (!res.ok) {
+        console.error('Update failed', await res.text());
+        alert('Error updating resource.');
+        return;
+      }
+
+      alert('Resource updated successfully.');
+      location.href = 'modify.html';
+    } catch (err) {
+      console.error(err);
+      alert('Network error updating resource.');
+    }
+  }
+
+  async function deleteResource() {
+    const { type, id } = getQueryParams();
+    const path = resourcePathFromType(type);
+
+    if (!confirm('Are you sure you want to delete this resource?')) return;
+
+    try {
+      const res = await fetch(`${API_BASE}/admin/${path}?id=${encodeURIComponent(id)}`, {
+        method: 'DELETE'
+      });
+
+      if (!res.ok) {
+        console.error('Delete failed', await res.text());
+        alert('Error deleting resource.');
+        return;
+      }
+
+      alert('Resource deleted.');
+      location.href = 'modify.html';
+    } catch (err) {
+      console.error(err);
+      alert('Network error deleting resource.');
+    }
+  }
+
+  function discardChanges() {
+    location.href = 'modify.html';
+  }
+
+  document.getElementById('saveBtn').addEventListener('click', saveResource);
+  document.getElementById('discardBtn').addEventListener('click', discardChanges);
+  document.getElementById('deleteBtn').addEventListener('click', deleteResource);
+
+  window.addEventListener('DOMContentLoaded', loadResource);
+</script>
+<script src="manage-profile.js"></script>
+</body>
+</html>

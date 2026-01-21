@@ -1,0 +1,134 @@
+{
+  "students": [
+    {
+      "username": "40312345",
+      "firstName": "Emma",
+      "lastName": "Johnson",
+      "email": "emmaj@gmail.com",
+      "phone": "5142345678",
+      "password": "h"
+    },
+    {
+        "username": "40367890",
+      "password": "ocean",
+      "firstName": "Liam",
+      "lastName": "Martinez",
+      "phone": "5143456789",
+      "email": "liamm@hotmail.com"
+    },
+    {
+      "username": "40323456",
+      "password": "tree",
+      "firstName": "Sophia",
+      "lastName": "Chen",
+      "phone": "5144567890",
+      "email": "sophiac@gmail.com"
+    },
+    {
+      "username": "40378901",
+      "password": "moon",
+      "firstName": "Noah",
+      "lastName": "Patel",
+      "phone": "5145678901",
+      "email": "noahp@aol.com"
+    },
+    {
+      "username": "40334567",
+      "password": "river",
+      "firstName": "Olivia",
+      "lastName": "Tremblay",
+      "phone": "5146789012",
+      "email": "oliviat@gmail.com"
+    },
+    {
+      "username": "40389012",
+      "password": "cloud",
+      "firstName": "Ethan",
+      "lastName": "Roy",
+      "phone": "5147890123",
+      "email": "ethanr@hotmail.com"
+    },
+    {
+      "username": "40345678",
+      "password": "stone",
+      "firstName": "Ava",
+      "lastName": "Leblanc",
+      "phone": "5148901234",
+      "email": "aval@gmail.com"
+    },
+    {
+      "username": "40390123",
+      "password": "fire",
+      "firstName": "Mason",
+      "lastName": "Kim",
+      "phone": "5149012345",
+      "email": "masonk@aol.com"
+    }
+  ],
+  "admins": [
+    {
+      "username": "50312345",
+      "password": "sky",
+      "firstName": "Sarah",
+      "lastName": "Anderson",
+      "phone": "5142123456",
+      "email": "saraha@gmail.com"
+    },
+    {
+      "username": "50367890",
+      "password": "wind",
+      "firstName": "Michael",
+      "lastName": "Dubois",
+      "phone": "5143234567",
+      "email": "michaeld@hotmail.com"
+    },
+    {
+      "username": "50323456",
+      "password": "star",
+      "firstName": "Jennifer",
+      "lastName": "Wong",
+      "phone": "5144345678",
+      "email": "jenniferw@gmail.com"
+    },
+    {
+      "username": "50378901",
+      "password": "rain",
+      "firstName": "David",
+      "lastName": "Gagnon",
+      "phone": "5145456789",
+      "email": "davidg@aol.com"
+    },
+    {
+      "username": "50334567",
+      "password": "earth",
+      "firstName": "Jessica",
+      "lastName": "Nguyen",
+      "phone": "5146567890",
+      "email": "jessican@gmail.com"
+    },
+    {
+      "username": "50389012",
+      "password": "snow",
+      "firstName": "Robert",
+      "lastName": "Lavoie",
+      "phone": "5147678901",
+      "email": "robertl@hotmail.com"
+    },
+    {
+      "username": "50345678",
+      "password": "leaf",
+      "firstName": "Amanda",
+      "lastName": "Singh",
+      "phone": "5148789012",
+      "email": "amandas@gmail.com"
+    },
+    {
+      "username": "50390123",
+      "password": "light",
+      "firstName": "James",
+      "lastName": "Bouchard",
+      "phone": "5149890123",
+      "email": "jamesb@aol.com"
+    }
+  ]
+}
