@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Bookings - Concordia</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="internal-page">
+
+    <!--Navigation-->
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="mainPage.html" class="navbar-brand">
+                <img src="gina-cody-icon.png" alt="Logo">
+                Campus Booking
+            </a>
+            <div class="navbar-links">
+                <a href="mainPage.html" class="active">My Bookings</a>
+                <a href="add_booking.html">New Booking</a>
+                <a href="edit_profile.html">Profile</a>
+            </div>
+        </div>
+    </nav>
+
+    <!--Main content-->
+    <div class="container">
+
+        <!--Welcome-->
+        <div class="welcome-card">
+            <h1>Welcome back, <span id="userName">Student</span>!</h1>
+            <p>Manage your campus resource bookings</p>
+        </div>
+
+        <!--Bookings-->
+        <div class="bookings-section">
+            <h2>My Bookings</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Resource</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Status</th>
+                        <th>Select</th>
+                    </tr>
+                </thead>
+                <tbody id="booking-body">
+                    <!--Filled with JS-->
+                </tbody>
+            </table>
+
+            <div class="actions">
+                <a href="add_booking.html" class="btn btn-primary">Add Booking</a>
+                <button class="btn btn-secondary" id="cancel-selected">Cancel Selected</button>
+            </div>
+
+            <p class="note">To modify a booking: cancel it and create a new one</p>
+        </div>
+
+    </div>
+    <script src="mainPage.js"></script>
+</body>
+
+</html>

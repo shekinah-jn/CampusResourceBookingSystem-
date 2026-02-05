@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Booking - Concordia</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+
+<body class="internal-page">
+
+    <!--Navigation-->
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="mainPage.html" class="navbar-brand">
+                <img src="gina-cody-icon.png" alt="Logo">
+                Campus Booking
+            </a>
+            <div class="navbar-links">
+                <a href="mainPage.html">My Bookings</a>
+                <a href="add_booking.html" class="active">New Booking</a>
+                <a href="edit_profile.html">Profile</a>
+            </div>
+        </div>
+    </nav>
+
+    <!--Main content-->
+    <div class="form-container">
+
+        <!--Header-->
+        <div class="form-header">
+            <h1>Create New Booking</h1>
+            <p>Reserve a campus resource</p>
+        </div>
+
+        <!--Form-->
+        <form id="booking-form">
+
+            <div class="form-group">
+                <label for="category">Resource Category</label>
+                <select id="category" required>
+                    <option value="">Select category</option>
+                    <option value="labs">Labs</option>
+                    <option value="rooms">Rooms</option>
+                    <option value="equipment">Equipment</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="resource">Resource</label>
+                <select id="resource" required>
+                    <option value="">Select category first</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="date">Date</label>
+                <input type="date" id="date" required>
+            </div>
+
+            <div class="form-group">
+                <label for="start">Start Time</label>
+                <input type="time" id="start" required>
+            </div>
+
+            <div class="form-group">
+                <label for="end">End Time</label>
+                <input type="time" id="end" required>
+            </div>
+
+            <div class="form-actions">
+                <a href="mainPage.html" class="btn btn-secondary">Cancel</a>
+                <button type="button" class="btn btn-primary" id="submit-booking">Submit</button>
+            </div>
+
+        </form>
+
+    </div>
+
+    <script src="add_booking.js"></script>
+</body>
+
+</html>

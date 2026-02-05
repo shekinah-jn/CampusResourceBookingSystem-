@@ -1,0 +1,36 @@
+{
+  "students": [
+    {
+      "username": "40312345",
+      "firstName": "Emma",
+      "lastName": "Johnson",
+      "email": "emmaj@gmail.com",
+      "phone": "5142345678",
+      "password": "h"
+    },
+    {
+      "username": "40367890",
+      "password": "ocean",
+      "firstName": "Liam",
+      "lastName": "Martinez",
+      "phone": "5143456789",
+      "email": "liamm@hotmail.com"
+    },
+    {
+      "username": "40323456",
+      "password": "tree",
+      "firstName": "Sophia",
+      "lastName": "Chen",
+      "phone": "5144567890",
+      "email": "sophiac@gmail.com"
+    },
+    {
+      "username": "40378901",
+      "password": "moon",
+      "firstName": "Noah",
+      "lastName": "Patel",
+      "phone": "5145678901",
+      "email": "noahp@aol.com"
+    }
+  ]
+}
